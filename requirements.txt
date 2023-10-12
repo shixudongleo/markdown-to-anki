@@ -1,3 +1,2 @@
-markdown
-pymdown-extensions
-beautifulsoup4
+markdown-anki-decks
+

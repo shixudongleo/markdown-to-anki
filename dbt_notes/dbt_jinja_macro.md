@@ -24,3 +24,31 @@ packages have predefined models, macros for you to import and use in the project
 ## 5. `run_query` macro returns a Table object that follows agate API
 
 https://docs.getdbt.com/reference/dbt-jinja-functions/run_query
+
+## 6. common dbt jinja function or objects 
+
+**objects** 
+
+- target 
+- graph 
+
+**functions**
+- log 
+- run_query
+
+
+## 7. common jinjia syntax used in dbt 
+
+blocks:
+
+- branching: if / elif  / else 
+- loop: for 
+- customized macro 
+
+executing block
+- `{{ }}`
+- `{% do xxx %}`
+
+others:
+- built-in funciton (e.g. str functions)
+- whitespace control (trailing / heading whitespace)

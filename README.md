@@ -56,3 +56,12 @@ body of question 2
 
 ...
 ```
+
+### who to genrate the anki binary 
+
+
+
+1. Create the input directory `mkdir input`.
+2. Create the output directory `mkdir output`.
+3. `mdankideck input output`
+

@@ -24,7 +24,6 @@
 in development:
 
 - manual 
-- 
 
 in deployment:
 
@@ -60,7 +59,7 @@ in QA branch to Master branch
 
 `dbt build --fail-fast`
 
-![Best Practice](image.png)
+![Best Practice](dbt_test_best_practice.png)
 
 ## DBT Test - store test failures 
 
@@ -86,7 +85,7 @@ when the test failed, the result will be saved on a test schema table in the dat
 
 you can override default generic test simply by defining your own generic test logic with same name
 
-![dbt_test_override_generic_test](image.png)
+![dbt_test_override_generic_test](dbt_test_override_generic_test.png)
 
 
 ## What is a singular test 

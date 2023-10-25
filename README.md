@@ -63,5 +63,5 @@ body of question 2
 
 1. Create the input directory `mkdir input`.
 2. Create the output directory `mkdir output`.
-3. `mdankideck input output`
+3. `mdankideck dbt_notes dbt_anki`
 

@@ -65,3 +65,6 @@ body of question 2
 2. Create the output directory `mkdir output`.
 3. `mdankideck dbt_notes dbt_anki`
 
+
+
+TODO: auto compile anki binary when merge to master branch

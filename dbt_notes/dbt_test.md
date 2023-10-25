@@ -70,5 +70,32 @@ for efficient troubleshooting
 when the test failed, the result will be saved on a test schema table in the data warehouse. 
 
 
+## DBT generic test 
 
+- location: `dbt_project/tests/generic/xxx.sql`
+- function signiture 
+
+```
+{% test generic_test_name(model, column_name) %}
+
+{% endtest %}
+```
+
+
+## DBT override default generic test 
+
+you can override default generic test simply by defining your own generic test logic with same name
+
+![dbt_test_override_generic_test](image.png)
+
+
+## What is a singular test 
+
+- A singular test is a SQL SELECT statement that makes an assertion in reference to a specific model and its specific columns. 
+- Singular tests are sql files that live in the tests folder and use the ref function to call a specific model. 
+
+
+## how to enable and disable singular test 
+
+`{{ config(enabled = False/ True) }}`
 

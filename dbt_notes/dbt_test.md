@@ -32,7 +32,7 @@ in deployment:
 
 in PR to Master Branch 
 
-- CI `dbt build --model state:modified+`
+- CI `dbt build --select state:modified+`
 - build the models changed
 
 

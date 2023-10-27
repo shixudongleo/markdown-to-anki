@@ -116,6 +116,58 @@ caveats:
 - tests key as list or embeded object (key-value)
 
 
+## DBT Test Config 
+
+like dbt model has configurations, dbt test also has configuration
+
+**where to put the dbt test confgi**
+
+1. inside generic / singular test  `{{ config() }}` block
+2. in yml file tests block 
+
+    ```
+    columns: 
+        - name: customer_id
+        description: primary key
+        tests:
+            - unique
+            - not_null
+            config:
+                severity: error
+                error_if: ">100"
+    ```
+3. in `dbt_projects.yml` for project level configs
+
+    ```
+    models:
+        jaffle_shop:
+        ...
+
+    tests:
+    jaffle_shop:
+        +severity: warn
+        +store_failures: true
+    ```
+
+## DBT Test - Key Configs
+
+1. `severity` and threshold
+2. `where`: filter and reduce the amount of data to test against (allows you to filter down to a subset of rows that you want to test)
+3. `limit`: limit the number of fail reocrd returned 
+4. `store-failures` / `schema` (store the failed test in schema)
+
+```
+    tests:
+      - xxx_test:
+          config:
+            severity:
+            where: 
+            limit: 10 
+            store_failure: true/ false
+            schema: test_failures
+```
+
+
 ## dbt_utils notes
 
 dbt_utils is a one-stop-shop for several key functions and tests that you’ll use every day in your project.

@@ -16,7 +16,7 @@
 `create or replace table xxx as ()`
 
 
-## how does ephemeral how does view and table 
+## how does ephemeral VS view and table 
 
 - don't exist in database 
 - repeated snippet as CTE and used by calling ref to the ephemeral model
@@ -28,13 +28,13 @@ cavete:
 
 ## Tradeoff of view / table / ephemeral 
 
-- speed：ephermal (fast) / view (intermediate) / table (take the longer time)
-- storage: ephermal (no data stored) / view (no data stored) / table (rebuild data every time)
-- compute: ephermal (similar to view) / view (recalculate every time) / table(use table's persisted result)
+- build speed：ephermal (fast) / view (intermediate) / table (take the longer time)
+- storage: ephermal (no data stored) / view (no data stored, compute logic is stored) / table (data sotred in DB, rebuild data every time)
+- compute needed when query: ephermal (similar to view) / view (recalculate every time) / table(use table's persisted result)
 
 ## what is the incremental model in DBT
 
-if history data doesn't change, and the transformation done on historical data shouldn't be done over and over again. (e.g log data, di/hi tables)
+if history data doesn't change, and the transformation for historical data shouldn't be done over and over again. (e.g log data, di/hi tables)
 benefits: you save time and money
 
 ## How to make incremental model in DBT
@@ -54,6 +54,62 @@ benefits: you save time and money
 - https://discourse.getdbt.com/t/purpose-of-dbt-being-idempotent-for-when-data-grows-large/3144/5
 - https://discourse.getdbt.com/t/understanding-idempotent-data-transformations/518
 - https://discourse.getdbt.com/t/on-the-limits-of-incrementality/303
+
+
+
+## What is snapshot in DBT? 
+
+dbt snapshot is the implementation of SCD Type2. It captures the data changes on a regular scheduling. 
+
+extra columns used 
+
+- `dbt_valid_from`
+- `dbt_valid_to`
+- `dbt_updated_at`
+- `dbt_scd_id`
+
+to detect the changes, we have two strategies
+
+1. timestamp: `update_at`
+2. check: `check_cols`
+
+
+```
+    {{
+        config(
+          target_schema='snapshots',
+          strategy='timestamp',
+          unique_key='id',
+          updated_at='updated_at',
+        )
+    }}
+
+
+    {{
+        config(
+          target_schema='snapshots',
+          strategy='check',
+          unique_key='id',
+          check_cols=['status', 'is_cancelled'],
+        )
+    }}
+```
+
+
+## Key differences of Snapshot VS Model 
+
+scenario 1: 
+
+1. snapshot or SCD type2 data capturing, we want to treat it more like raw source data. 
+(because we don't want to lose data/ never full-refresh), this also means that we want minimal transformation on snapshot as well.
+
+2. we want to put the data into target database, schema differently than model schema to avoid mistakenly drop the snapshot data
+
+scenario 2:
+
+snapshot the metrics at the end of the data pipeline. if the board report is very important, and we want to keep track of the numbers we have reported.
+so that we know what we have reported at when. SCD Type 2 can help.
+
 
 
 ## Tips on DBT Materialization 

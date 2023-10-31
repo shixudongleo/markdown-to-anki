@@ -56,6 +56,48 @@ benefits: you save time and money
 - https://discourse.getdbt.com/t/on-the-limits-of-incrementality/303
 
 
+## incremental model concept framework
+
+![dbt_materialization_incremental_concept_framework](dbt_materialization_incremental_concept_framework1.png)
+
+- full-refresh is like a 1st full table run 
+- incremental run is combined with historical run to simulate the full table run (approximate)
+
+what to do with late arrival data:
+
+1. full-refresh run to correct the missing late arrival data
+2. extend/increase the cut-off date, so we can include late arrival data. (e.g. 3days window)
+
+extended windows (e.g. 3days) has an issue, there are overlapping records, which will result in duplicate if we just insert into.
+we need to use merge (upsert) for idempotency by `unique_key` configuration. (without `unique_key` insert into, with `unique_key` merge/upsert)
+
+![dbt_materialization_incremental_concept_framework1](dbt_materialization_incremental_concept_framework2.png)
+
+## How to choose incremental model cutoff date?
+
+use statistical mehtod, 
+
+- analyze the arrival time statistics of the data 
+- time tie to the data: event time / processing time / arrival time (processing time - arrival time 99.9 percentile e.g.) 
+
+![dbt_materialization_incremental_arrival_time_stats](dbt_materialization_incremental_arrival_time_stats.png)
+
+
+## How to handle window function affected by incremental cutoff 
+
+the key of incremental is using cutoff to separate data into old and new chunks. It may be mutal exclusive or overlapping.
+Whichever, window function may be affected due to the sepration of cutoff line. 
+
+![dbt_materialization_incremental_cutoff_line](dbt_materialization_incremental_cutoff_line.png)
+
+
+## When to use incremental model
+
+good candidate
+
+- data that is immutable, e.g. log data / traffic log 
+- data updated with reliable update_at timestamp e.g. order data
+
 
 ## What is snapshot in DBT? 
 

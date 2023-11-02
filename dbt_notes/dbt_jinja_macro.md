@@ -100,3 +100,11 @@ key objects:
   add where filter to limit 
 {% endif %}
 ```
+
+## be aware of code readability VS use of macro/func for DRY
+
+SQL human readability <-----------> DRY
+
+- SQL itself is declarative, and more readable 
+- by adding more macros, you are reuse a lot more codes (DRY)
+- try to find the right number of macros as max in a SQL file 

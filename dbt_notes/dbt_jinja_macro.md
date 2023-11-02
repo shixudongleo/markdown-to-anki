@@ -52,3 +52,51 @@ executing block
 others:
 - built-in funciton (e.g. str functions)
 - whitespace control (trailing / heading whitespace)
+
+## what is dbt jinja
+
+using templating language in DBT is provided by Jinja.
+jinja has a few programming features
+
+- variables: asignment / reference / data type: str / number / list / dict
+- control flow: if branching / for loop 
+- macro (function)
+- white space control
+
+## Jina templating convention of str data type 
+
+参数（param) 是str时，当使用时，它默认是value不带引号"", 引号需要自己提供。
+
+why: 
+
+- 实际场景中，会有引号和无引号的需求，默认无引号，让后续处理更加灵活。
+- jinja dbt 中， 使用列名时（column name) 需要使用 str类型，不然jinja会去查找与列名同名的var变量使用
+
+## how to define and use macro 
+
+- create macro in `macros` subfolder with `.sql` file extension
+- define func name, and parameters `{% macro func_name(arg1, arg2, ...) %} {% endmacro %}`
+- use parameter or variables by `{{ xxx }}`
+- call macro by `{{ func(arg1, arg2, ...) }}`
+
+
+## how to get dbt built-in variables
+
+`{{ target.name }}`
+
+key objects:
+
+- target
+- adapter 
+- graph 
+- this 
+- model
+
+
+## use dbt jinja to limit data processing in deve environment 
+
+```
+{%if target.name == 'dev' %}
+  add where filter to limit 
+{% endif %}
+```

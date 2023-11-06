@@ -11,6 +11,7 @@ packages have predefined models, macros for you to import and use in the project
 - use predefined package name
 - use github repo link and branch name
 - use local project folder (local package development)
+- tarball url tarball URL + package name. e.g. "tarball: xxx/dbt-utils/tar.gz/0.9.6" / "name: dbt-utils"
 
 
 ## 3. union-tables-by-prefix-macro 什么时候使用

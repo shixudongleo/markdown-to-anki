@@ -38,6 +38,10 @@ $ DBT_ENV_CUSTOM_ENV_MY_FAVORITE_COLOR=indigo DBT_ENV_CUSTOM_ENV_MY_FAVORITE_NUM
 ```
 
 
+## dbt environment variables must start with `DBT_` prefix?
+
+yes
+
 ## `var` what is Variables in DBT
 
 dbt provides a mechanism, variables, to provide data to models for compilation. 
@@ -83,4 +87,38 @@ The order of precedence for variable declaration is as follows (highest priority
 5. The variable's default argument (if one is provided)
 
 
+## DBT "+" prefix 
 
+1. "+" prefix in  `dbt_profile.yml` to differentiate path resources VS config (with the same name)
+2. "+" prefix for node selection during CLI `--select +xxxx` select node xxxx and its upstream
+
+
+example: `+tags` is config, while `tags` without "+" is resource path 
+
+```
+name: jaffle_shop
+config-version: 2
+
+...
+
+models:
+  +persist_docs: # this config is a dictionary, so needs a + prefix
+    relation: true
+    columns: true
+
+  jaffle_shop:
+    schema: my_schema # a plus prefix is optional here
+    +tags: # this is the tag config
+      - "hello"
+    tags: # whereas this is the tag resource path
+      # The below config applies to models in the
+      # models/tags/ directory.
+      # Note: you don't _need_ a leading + here,
+      # but it wouldn't hurt.
+      materialized: view
+
+```
+
+
+https://discourse.getdbt.com/t/help-with-tags-versus-just-tags/6503
+https://docs.getdbt.com/reference/resource-configs/plus-prefix

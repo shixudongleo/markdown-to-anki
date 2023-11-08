@@ -32,8 +32,33 @@ One Trunk Promotion (direct)
 feature branch directly to main/master branch 
 
 
+- Developer branch off of the main branch.
+- After developing, they open a pull / merge request.
+- This kicks off a CI job that builds and tests the dbt code in a temporary PR schema.
+- After code review and CI checks pass, the code can merged into main.
+
+![dbt_deployment_trunk1](dbt_deployment_trunk1.png)
+
+
+
 Many Trunks Promotion (indirect)
 
 
 1. feature branch directly to intermediate branch for more testing 
 2. and then intermediate branch merge to main/master branch 
+
+- Developer branch off of the qa branch
+- After developing, they open a pull / merge request against the qa branch
+- This kicks off a CI job that builds and tests the dbt code in a temporary PR schema.
+- After code review and CI checks pass, the code can merged into qa.
+- The core owner then manages the merging of code from qa to the main branch through another CI process.
+
+![dbt_deployment_trunk2](dbt_deployment_trunk2.png)
+
+
+Pros and Cons 
+
+- Trunk1 is the recommended approach for most use-cases as it allows changes to code to be quickly moved to production, with confidence that they can be trusted.
+- Trunk2 might slow down the time for getting new features into production.
+
+https://www.getdbt.com/blog/adopting-ci-cd-with-dbt-cloud/

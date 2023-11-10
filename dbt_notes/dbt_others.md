@@ -122,3 +122,47 @@ models:
 
 https://discourse.getdbt.com/t/help-with-tags-versus-just-tags/6503
 https://docs.getdbt.com/reference/resource-configs/plus-prefix
+
+
+## what is DBT Hook 
+
+Effective database administration sometimes requires additional SQL statements to be run, for example:
+
+- Creating UDFs
+- Managing row- or column-level permissions
+- Vacuuming tables on Redshift
+- Creating partitions in Redshift Spectrum external tables
+- Resuming/pausing/resizing warehouses in Snowflake
+
+dbt provides hooks and operations so you can version control (static) and execute (runtime) these statements as part of your dbt project.
+
+
+Hooks are snippets of SQL that are executed at different times:
+
+- pre-hook: executed before a model, seed or snapshot is built.
+- post-hook: executed after a model, seed or snapshot is built.
+- on-run-start: executed at the start of dbt build, dbt compile, dbt docs generate, dbt run, dbt seed, dbt snapshot, or dbt test.
+- on-run-end: executed at the end of dbt build, dbt compile, dbt docs generate, dbt run, dbt seed, dbt snapshot, or dbt test.
+
+pre-hook / post-hook are model related 
+
+on-run-start/ on-run-end are related to cli command execution
+
+
+## DBT Hooks execution order 
+
+- Hooks are cumulative: If you define hooks in both your dbt_project.yml and in the config block of a model, both sets of hooks will be applied to your model.
+
+- Execution ordering: If multiple instances of any hooks are defined, dbt will run each hook using the following ordering:
+
+  + Hooks from dependent packages will be run before hooks in the active package.
+  + Hooks defined within the model itself will be run after hooks defined in dbt_project.yml.
+  + Hooks within a given context will be run in the order in which they are defined.
+
+
+
+## DBT select with source_status 
+
+https://docs.getdbt.com/reference/node-selection/methods
+
+https://docs.getdbt.com/docs/deploy/continuous-integration#fresh-rebuilds

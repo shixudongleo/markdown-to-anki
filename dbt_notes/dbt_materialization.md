@@ -157,3 +157,17 @@ so that we know what we have reported at when. SCD Type 2 can help.
 ## Tips on DBT Materialization 
 
 1. starts with view; when it takes too long, change to table; when it takes too long to build, switch to incremental.
+
+
+
+## DBT incremental model what to do if no specific single unique key
+
+1. use config  `unique_key=['col1', 'col2']`, note that cols in unqiue_keys must not be null, otherwise run may fail 
+2. use genrated surrogate key as unique_key 
+
+https://docs.getdbt.com/docs/build/incremental-models
+
+
+
+To ensure that the unique_key is truly unique, it's recommended to use a combination of columns as the unique_key. 
+

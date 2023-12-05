@@ -174,3 +174,13 @@ There are four levels of environment variables:
 4. the job level (job override) or in the IDE for an individual dev (personal override)
 
 
+
+## DBT continuous integration 
+
+- master branch: daily scheduled run
+- feature branch -> master branch
+    - dbt run / dbt test for all models using CI
+    - slim CI only run on changed models and downstreams `dbt run -s state:modified+`
+
+
+![dbt_deployment_ci](dbt_deployment_ci.png)

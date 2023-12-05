@@ -37,7 +37,7 @@ sources:
       loaded_at_filed: column_name_of_record_update
 ```
 
-## How to rename source schema 
+## How to rename source schema (DB reanme)
 
 `{{ source('xxx_alias', 'table_name') }}`
 
@@ -52,4 +52,20 @@ sources:
     tables:
       - table1
       - table2
+```
+
+
+## How to rename source table (table rename)
+
+`{{ source('db_name', 'xxx_alias)}}`
+
+1. source table name update to the alias
+2. source tables identifier as the original table name
+
+```
+sources:
+  - name: dbt_name
+    tables:
+      - name: table_alias
+        identifier: table_original names
 ```

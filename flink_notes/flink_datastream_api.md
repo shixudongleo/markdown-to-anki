@@ -206,6 +206,142 @@ source.flatMap()
 ```
 
 
+## Flink Data Stream API - Keyby
+
+- KeyBy, 分组，指定 key 后， 相同的key 后落在同一机器
+- KeyBy 返回 KeyedStream 与 Operator 不同（可以 `setParalelism`）
+
+```
+stream.keyBy(new KeySelector<>(xxx))
+```
+
+KeyedStream 可以按照分组进行聚合:
+
+- min / max / sum / minBy / maxBy (minBy, maxBy 取最大值，非比较字段也取最大值对应的记录)
+- `min(position)` or `min("str_field_name")`
+
+```
+keyedStream.min/max/sum
+```
+
+
+KeyedStream 可以按照分组 两两聚合
+
+- reduce
+
+```
+keyedStream.reduce(new ReduceFunction<>(xxx))
+```
+
+
+## Flink DataStream API - 两种按口使用方式
+
+1. implement interface
+2. 继承 abastract class, 并实现 abstract function
+
+
+MapFunction
+
+- implement interface `map`
+
+RichMapFunction
+
+- abstract funciton `map`
+- 多了生命周期function: `open()`, `close()`
+- 多了获取 runtime context 的办法
+
+## Flink DataStream API - Shuffle with partition
+
+- random
+- rebalance / round robin
+- rescale (round robin locally within subgroup)
+- broadcast
+- hash (keyBy)
+- global (all send to task 0)
+- forward (one-to-one)
+- customized
+
+
+```
+// random 
+stream.shuffle()
+
+stream.rebalance()
+stream.rescale()
+stream.broadcast()
+stream.global()
+```
+
+custom partition
+
+```
+stream.partitionCustom(new Partitioner(), new KeySelector())
+```
+
+
+## Flink DataStream API - 分流
+
+1. 主流 通过 filter 过滤，形成新的流 （如果主流被过滤多次，处理的主流 流量会加倍，性能下降）
+2. process， 主流切分多个流 （主体处理的流量是固定的）
+
+    - 主流: `collector.collect()`
+    - 侧流: `ctx.output()`
+    - processStream是主流
+    - process.getOutput 从主流中获取侧流， by tag
+
+```
+stream.process(new ProcessFunction() {
+
+})
+```
+
+## Flink DataStream API - 合并流
+
+- union of two / more streams (流的元素类型必须相同)
+- 连接流:connect two streams (流的元素类型可以不同)
+
+union
+
+```
+DataStreamSource<Integer> source1 = env.fromElements(1, 2, 3);
+DataStreamSource<Integer> source2 = env.fromElements(11, 22, 33);
+DataStreamSource<String> source3 = env.fromElements("111", "222", "333");
+
+source1.union(source2, source3.map(val -> Integer.valueOf(val))).print();
+source1.union(source2).union(source3.map(val -> Integer.valueOf(val))).print();
+```
+
+connect stream
+
+```
+ConnectedStreams<Integer, String> connect = source1.connect(source3);
+connect.map(new CoMapfunction<T1, T2, OUT>() {
+
+    // map1 of T1
+    // map2 of T2
+} )
+```
+
+connected stream 多流匹配时， e.g. join, 需要用关联字段做keyBy, 这样多个机器（多并行度）时，
+同一样分区的数据会发送到同一个机器，保障结果是正确的。
+
+
+## Flink DataStream / KeyedStream / ConnectedStreams 转换
+
+
+![flink_datastream_api_stream_relation](flink_datastream_api_stream_relation.png)
+
+
+## Flink DataStream API 中 XXXFunction 匿名类 VS Lambda Function
+
+- Lambda 会存在类型 擦除，导致 类型推断失效
+- Lambda 会存在类型 擦除，Serializatin 序列化 效率低下
+
+- Lambda 表达式的可读性更高，functional programming 概念更强
+
+- https://blog.51cto.com/alanchan2win/8639948
+- https://juejin.cn/post/6844904176963551239
+- https://blog.csdn.net/fu_huo_1993/article/details/103108847
 
 
 ## Flink DataStream API - Sink
@@ -217,11 +353,33 @@ connector 有些支持 source / sink, 需要确认
 https://nightlies.apache.org/flink/flink-docs-release-1.17/docs/dev/datastream/overview/
 
 
+
+## Flink DataStream API Debug with local WebUI
+
+create local env with configurations
+
+```
+Configuration conf = new Configuration();
+conf.set(RestOptions.BIND_PORT, "8082");
+StreamExecutionEnvironment env = StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(conf);
+```
+
+add dependency `flink-runtime-we`
+
+```
+<dependency>
+    <groupId>org.apache.flink</groupId>
+    <artifactId>flink-runtime-web</artifactId>
+    <version>${flink.version}</version>
+</dependency>
+```
+
 ## Docs
 
 - https://javadoc.io/doc/org.apache.flink/flink-streaming-java/1.17.0/index.html
 - https://nightlies.apache.org/flink/flink-docs-release-1.17/
 
+- [Flink tech blog](https://blog.csdn.net/chenwewi520feng/article/details/131530503)
 
 ## Java data structure used in Flink
 
@@ -232,3 +390,4 @@ https://nightlies.apache.org/flink/flink-docs-release-1.17/docs/dev/datastream/o
 
 `java.TUPLE`
 
+java lambda function
